@@ -47,15 +47,15 @@ interface Form {
 }
 
 /** The eight sample invoices in samples/invoices, described relative to today. */
-const SAMPLES: { id: string; business: string; amount: string; state: string }[] = [
-  { id: "INV-1042", business: "Corner Café", amount: "A$1,240", state: "5 days late" },
-  { id: "INV-1038", business: "Harbour Deli", amount: "A$860", state: "16 days late" },
-  { id: "INV-1029", business: "Hilltop Bakehouse", amount: "A$975", state: "40 days late" },
-  { id: "INV-1031", business: "Bay Bistro", amount: "A$1,580", state: "Chased 4 days ago" },
-  { id: "INV-1035", business: "Northside Grocer", amount: "A$2,150", state: "Paid" },
-  { id: "INV-1045", business: "Park Kiosk", amount: "A$420", state: "Due in 5 days" },
-  { id: "INV-1027", business: "Station Coffee", amount: "A$640", state: "No client email" },
-  { id: "INV-1022", business: "Seaside Diner", amount: "A$1,100", state: "After a final notice" },
+const SAMPLES: { id: string; business: string; amount: string; state: string; sends: boolean }[] = [
+  { id: "INV-1042", business: "Corner Café", amount: "A$1,240", state: "5 days late · friendly", sends: true },
+  { id: "INV-1038", business: "Harbour Deli", amount: "A$860", state: "16 days late · firm", sends: true },
+  { id: "INV-1029", business: "Hilltop Bakehouse", amount: "A$975", state: "40 days late · final notice", sends: true },
+  { id: "INV-1031", business: "Bay Bistro", amount: "A$1,580", state: "Chased 4 days ago", sends: false },
+  { id: "INV-1035", business: "Northside Grocer", amount: "A$2,150", state: "Already paid", sends: false },
+  { id: "INV-1045", business: "Park Kiosk", amount: "A$420", state: "Not due for 5 days", sends: false },
+  { id: "INV-1027", business: "Station Coffee", amount: "A$640", state: "No client email", sends: false },
+  { id: "INV-1022", business: "Seaside Diner", amount: "A$1,100", state: "Unpaid after a final notice", sends: false },
 ];
 
 function isoDaysAgo(n: number): string {
@@ -190,9 +190,14 @@ export function LiveInvoiceChaser() {
 
         {mode === "send" ? (
           <>
-            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-500 dark:text-paper/50">Pick a sample invoice</p>
+            {[
+              { title: "These email you a reminder", list: SAMPLES.filter((x) => x.sends) },
+              { title: "These show the agent deciding not to chase · nothing is emailed", list: SAMPLES.filter((x) => !x.sends) },
+            ].map((group) => (
+            <div key={group.title}>
+            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-500 dark:text-paper/50">{group.title}</p>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
-              {SAMPLES.map((s) => (
+              {group.list.map((s) => (
                 <button
                   key={s.id}
                   type="button"
@@ -210,12 +215,14 @@ export function LiveInvoiceChaser() {
                 </button>
               ))}
             </div>
+            </div>
+            ))}
             <p className="mt-3 text-xs leading-relaxed text-ink-500 dark:text-paper/50">
               These are the{" "}
               <a href="https://github.com/HackrLife/Hackrlife-Agent-Lab/tree/main/samples/invoices" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-signal">
                 eight fictional sample invoices
               </a>{" "}
-              from Acme Bakery. If a reminder is due, the agent writes it and emails it to you, not to the client.
+              from Acme Bakery. When a reminder is due, the agent writes it and emails it to you, never to the client. Check your spam folder if it has not arrived within a couple of minutes.
             </p>
           </>
         ) : (
@@ -298,7 +305,13 @@ export function LiveInvoiceChaser() {
         </div>
 
         <button type="submit" disabled={phase === "sending"} className="btn-primary mt-6 w-full disabled:opacity-60">
-          {phase === "sending" ? "The agent is working…" : mode === "send" ? "Send it to me" : "Run the real agent"}
+          {phase === "sending"
+            ? "The agent is working…"
+            : mode === "send"
+              ? SAMPLES.find((x) => x.id === sampleId)?.sends
+                ? "Send it to me"
+                : "Show me what the agent decides"
+              : "Run the real agent"}
         </button>
         <p className="mt-3 text-xs leading-relaxed text-ink-500 dark:text-paper/50">
           {mode === "send"
