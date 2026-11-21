@@ -376,10 +376,8 @@ export const invoiceChaser: Product = {
     "Reads the invoice sheet every weekday at 08:00 and finds overdue, unpaid invoices",
     `Matches the tone to the delay: friendly from ${GRACE_DAYS} days, firm from ${FIRM_DAYS}, final notice from ${FINAL_DAYS}`,
     "Has a second agent check the invoice number, amount and due date in every reminder against the sheet",
-    "Holds back any invoice marked as disputed and leaves a note for the owner",
-    "Saves each reminder as a Gmail draft for the owner to check and send",
+    "Holds back disputed invoices and saves every other reminder as a Gmail draft for the owner to check and send",
     `Writes the draft date back to the sheet so no invoice is chased twice within ${REPEAT_DAYS} days`,
-    "Flags invoices with no email, and any still unpaid after a final notice, to the owner",
   ],
   boundaries: [
     "Never sends an email: every reminder is a draft until the owner sends it",
