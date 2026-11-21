@@ -448,4 +448,5 @@ export const invoiceChaser: Product = {
     ],
   },
   demo,
+  liveDemo: "invoice-chaser",
 };

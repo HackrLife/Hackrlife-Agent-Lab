@@ -266,4 +266,6 @@ export interface Product {
   ctaLine: string;
   graph: Graph;
   demo: DemoDefinition;
+  /** Optional panel that calls the real agent (see src/components/live). */
+  liveDemo?: "invoice-chaser";
 }

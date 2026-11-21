@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/Badge";
 import { FeatureList } from "@/components/FeatureList";
 import { Eyebrow } from "@/components/Section";
 import { ProductExperience } from "@/components/product/ProductExperience";
+import { LiveInvoiceChaser } from "@/components/live/LiveInvoiceChaser";
 
 /** Pre-render every product page at build time. */
 export function generateStaticParams() {
@@ -41,6 +42,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
               {String(p.no).padStart(2, "0")} · {p.sectorLabel}
             </span>
             <StatusBadge mode={p.demo.mode} />
+            {p.liveDemo && <span className="pill bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">Live agent</span>}
             {p.sectors.map((s) => (
               <Link key={s} href={`/agents?sector=${encodeURIComponent(s)}`} className="pill bg-data/15 text-data-600 hover:bg-data/25 dark:bg-data/20 dark:text-data">
                 {s}
@@ -51,7 +53,11 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
           <p className="mt-3 max-w-2xl font-display text-xl text-signal dark:text-brand-light">{p.outcome}</p>
           <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink-600 dark:text-paper/70">{p.definition}</p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <a href="#demo" className="btn-primary">Try demo</a>
+            {p.liveDemo ? (
+              <a href="#live" className="btn-primary">Try the real agent</a>
+            ) : (
+              <a href="#demo" className="btn-primary">Try demo</a>
+            )}
             <Link href={book} className="btn-ghost">Book a demo for my business</Link>
           </div>
         </div>
@@ -73,6 +79,19 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
             <FeatureList title="What it deliberately does not do" items={p.boundaries} tone="muted" />
           </div>
         </section>
+
+        {p.liveDemo === "invoice-chaser" && (
+          <section id="live" className="scroll-mt-24">
+            <Eyebrow>Live agent</Eyebrow>
+            <h2 className="font-display text-3xl font-semibold text-ink-900 dark:text-paper">Try the real agent</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-600 dark:text-paper/70">
+              This runs the actual n8n workflow and Claude, not a simulation. Give it one invoice and it decides whether to chase, picks the tone and writes the reminder. The draft comes back to this page; nothing is sent.
+            </p>
+            <div className="mt-6">
+              <LiveInvoiceChaser />
+            </div>
+          </section>
+        )}
 
         {/* 4 + 5. Interactive demo, workflow and harness */}
         <ProductExperience slug={p.slug} />

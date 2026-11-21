@@ -1,10 +1,12 @@
 # HackrLife Agent Lab
 
-A catalogue of twenty small-business automation solutions — built with **Next.js 14 (App Router)**, **TypeScript** and **Tailwind CSS**, deployed on **Vercel**.
+A catalogue of small-business automation solutions — built with **Next.js 14 (App Router)**, **TypeScript** and **Tailwind CSS**, deployed on **Vercel**.
 
 Every card opens a product page with a definition, a real business situation, an **interactive simulation** (customer side, business result, event trace), a product-specific **workflow and harness schematic** that highlights only the steps a run actually reached, delivery, deployment and measurement sections, and a product-aware **Book a demo for my business** form.
 
 > Demos are deterministic state machines running in the browser on fictional data. No messages are sent, no payments taken and no real systems written. Each demo states exactly what is simulated.
+>
+> Some agents also have a **live agent** panel that calls the real n8n workflow (see [How the live agents work](#how-the-live-agents-work)).
 
 ## Where things live
 
@@ -86,47 +88,47 @@ Brand name, consult email, canonical URL, and external links (newsletter, CV, Gi
 
 ```
 src/
-├── app/                      # App Router pages & routes
-│   ├── layout.tsx            # Fonts, SEO metadata, header/footer
-│   ├── page.tsx              # Home: hero, live demos, gallery
-│   ├── agents/
-│   │   ├── page.tsx          # Full gallery (search + category filter)
-│   │   └── [slug]/page.tsx   # Per-agent detail (demo or preview)
-│   ├── about|research|consult|resources/page.tsx
-│   ├── not-found.tsx         # Custom 404
-│   ├── robots.ts             # robots.txt
-│   └── sitemap.ts            # sitemap.xml
-├── components/               # 18 presentational + interactive components
+├── app/                        # App Router pages and routes
+│   ├── page.tsx                # Home
+│   ├── agents/page.tsx         # Catalogue with sector and outcome filters
+│   ├── agents/[slug]/page.tsx  # Product page (live panel, demo, schematic, delivery)
+│   ├── book/                   # Book a demo form
+│   └── robots.ts, sitemap.ts
+├── components/
+│   ├── product/                # Demo panel, schematic viewer, page experience
+│   └── live/                   # Panels that call a real n8n workflow
 ├── lib/
-│   ├── agents.ts             # ← SINGLE SOURCE OF TRUTH for all 30 agents
-│   ├── webhook.ts            # ← Webhook base + URL builder
-│   └── site.ts               # Brand, nav, external links
-└── styles/globals.css        # Tailwind layers + component classes
+│   ├── catalogue/              # Products, shared types and the simulation helper
+│   ├── webhook.ts              # Webhook base and URL builder
+│   └── site.ts                 # Brand, nav, external links
+└── styles/globals.css
+samples/                        # Fictional test data for the agents (e.g. samples/invoices)
+tests/                          # Path tests and fuzzing for every product
 ```
 
 ---
 
-## How the live demos work
+## How the live agents work
 
-1. A live agent (defined in `src/lib/agents.ts` with `status: "live"` and a `form`) renders an `AgentForm`.
-2. On submit, the form POSTs its fields as JSON to `webhookUrl(slug)`.
-3. The n8n workflow processes the request and returns JSON. `AgentForm` normalises common n8n response shapes (`{ output }`, `{ data }`, arrays, raw strings) and displays the result in `OutputPanel`.
-4. **Nothing publishes, schedules, or stores automatically.** The output is shown to the visitor only — keeping a human in the loop.
+A product with `liveDemo` set shows a **Try the real agent** panel above the simulation.
 
-The five live agents are: `landing-page-critic`, `campaign-angle-generator`, `voice-match-tweet-agent`, `newsletter-draft-agent`, and `custom-agent-recommender`. Each must have a corresponding workflow in n8n listening at `/{slug}`.
+1. The panel POSTs one fictional record as JSON to `webhookUrl(<slug>)`.
+2. A dedicated public n8n workflow validates the input, applies the same rules as the production workflow and, where needed, asks a model to write the output. It is rate-limited per day and returns JSON to the page.
+3. The public workflow has **no** email, calendar or sheet access. Nothing is sent or stored outside the n8n run log.
+
+Live today: `invoice-chaser` (agent 21).
 
 ---
 
 ## Adding or editing an agent
 
-Everything is data-driven from **`src/lib/agents.ts`** — you usually don't touch any component.
+1. Add `src/lib/catalogue/products/<slug>.ts` exporting a `Product` (copy an existing one, e.g. `invoice-chaser.ts`).
+2. Import it in `src/lib/catalogue/index.ts` and add it to `products`. Order follows the `no` field.
+3. Add `tests/<slug>.cases.ts` with at least three path cases.
+4. If it needs a new sector or outcome, add it to `Sector`/`Outcome` and `SECTORS`/`OUTCOMES` in `types.ts`, and a colour in `components/Badge.tsx`.
+5. Run `npx tsx tests/run.ts`, `npm run typecheck`, `npm run lint` and `npm run build`.
 
-1. Add a new object to the `agents` array. Required fields: `slug` (unique, URL-safe), `name`, `category`, `status`, `short`, `valueEstimate`, `tagline`, `helpsWith[]`, `whoFor[]`, `limitations[]`, `fullDeployment[]`, and a 5-step `workflow[]`.
-2. **For a preview agent:** set `status: "preview"`. Done — it appears in the gallery with a "Preview Use Case" CTA.
-3. **For a live agent:** set `status: "live"` and add a `form` object describing the fields (`input`, `textarea`, or `select`). Then create the matching n8n workflow at `https://<your-n8n>/webhook/<slug>`.
-4. The agent automatically appears on the home page, in the gallery, in its category filter, in `generateStaticParams`, and in the sitemap. No other edits needed.
-
-`category` must be one of the values in the `categories` array (Marketing, Content, Research, Operations, Creator, Freelancer, Small Business).
+The product then appears on the home page, in the catalogue, in the filters and in the sitemap.
 
 ---
 
