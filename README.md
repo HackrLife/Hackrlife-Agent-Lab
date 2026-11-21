@@ -114,8 +114,8 @@ A product with `liveDemo` set shows a **Try the real agent** panel above the sim
 
 1. The panel POSTs one fictional record as JSON to `webhookUrl(<slug>)`.
 2. A dedicated public n8n workflow validates the input, applies the same rules as the production workflow and, where needed, asks a model to write the output. It is limited to 25 runs a day (3 per email), blocks bots with a hidden field and a minimum time on the form, and returns JSON to the page.
-4. Visitors must give an email and tick a box to join the HackrLife newsletter. The workflow adds them to beehiiv and also saves each sign-up to the n8n data table "Agent Lab newsletter sign-ups".
-5. The public workflow has **no** email, calendar or sheet access. Nothing is sent or stored outside the n8n run log.
+3. Visitors must give an email and tick a box to join the HackrLife newsletter. The workflow adds them to beehiiv and also saves each sign-up to the n8n data table "Agent Lab newsletter sign-ups".
+4. The public workflow has **no** Gmail, calendar or sheet access. The drafted reminder is only shown on the page.
 
 Live today: `invoice-chaser` (agent 21).
 
