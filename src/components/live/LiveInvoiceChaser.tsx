@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { webhookUrl } from "@/lib/webhook";
 
 /**
@@ -8,6 +8,8 @@ import { webhookUrl } from "@/lib/webhook";
  * agent (n8n webhook `invoice-chaser`) and shows what it decided and, when a
  * reminder is due, the draft Claude wrote. The public workflow only returns
  * the draft to this page: it sends no email and writes to no sheet.
+ * Visitors give an email and agree to join the HackrLife newsletter; the
+ * workflow allows 25 runs a day in total and 3 per email.
  */
 
 type Status = "drafted" | "skipped" | "held" | "flagged" | "error";
@@ -22,9 +24,13 @@ interface AgentReply {
   subject?: string;
   body?: string;
   amount_check?: string;
+  runs_left_today?: number;
+  subscribed?: boolean;
 }
 
 interface Form {
+  email: string;
+  newsletter_consent: boolean;
   sender: string;
   client_name: string;
   client_business: string;
@@ -61,7 +67,10 @@ const STATUS_LABEL: Record<Status, { word: string; cls: string }> = {
 };
 
 export function LiveInvoiceChaser() {
+  const shownAt = useRef<number>(0);
   const [f, setF] = useState<Form>({
+    email: "",
+    newsletter_consent: false,
     sender: "Acme Bakery",
     client_name: "",
     client_business: "",
@@ -78,6 +87,7 @@ export function LiveInvoiceChaser() {
   const [reply, setReply] = useState<AgentReply | null>(null);
 
   useEffect(() => {
+    shownAt.current = Date.now();
     setF((s) => ({ ...s, ...PRESETS[0].make() }));
   }, []);
 
@@ -102,6 +112,9 @@ export function LiveInvoiceChaser() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          email: f.email,
+          newsletter_consent: f.newsletter_consent,
+          elapsed_ms: Date.now() - shownAt.current,
           sender: f.sender,
           client_name: f.client_name,
           client_business: f.client_business,
@@ -189,11 +202,26 @@ export function LiveInvoiceChaser() {
 
         <input type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" value={f.website} onChange={set("website")} />
 
+        <div className="mt-5 border-t border-ink-600/10 pt-5 dark:border-paper/10">
+          <label htmlFor="ic-email" className="label">Your email</label>
+          <input id="ic-email" type="email" className="field" value={f.email} onChange={set("email")} maxLength={120} required autoComplete="email" />
+          <label className="mt-3 flex cursor-pointer items-start gap-2 text-sm text-ink-700 dark:text-paper/75">
+            <input type="checkbox" checked={f.newsletter_consent} onChange={set("newsletter_consent")} required className="mt-0.5 h-4 w-4 rounded border-ink-600/30 text-signal focus:ring-signal" />
+            <span>
+              Sign me up to the{" "}
+              <a href="https://www.hackrlife.com/" target="_blank" rel="noopener noreferrer" className="underline decoration-ink-600/30 underline-offset-2 hover:text-signal">
+                HackrLife newsletter
+              </a>
+              . This is required to use the live agent, and you can unsubscribe at any time.
+            </span>
+          </label>
+        </div>
+
         <button type="submit" disabled={phase === "sending"} className="btn-primary mt-6 w-full disabled:opacity-60">
           {phase === "sending" ? "The agent is working…" : "Run the real agent"}
         </button>
         <p className="mt-3 text-xs leading-relaxed text-ink-500 dark:text-paper/50">
-          Please use made-up details. What you type goes to our n8n workflow and to Claude to write the draft, and appears in the run log. Nothing is emailed or saved to a sheet.
+          Live runs are limited to 25 a day across all visitors and 3 per email. For the invoice, please use made-up details: they go to our n8n workflow and to Claude to write the draft, and appear in the run log. The reminder is not emailed to anyone.
         </p>
       </form>
 
@@ -226,6 +254,12 @@ export function LiveInvoiceChaser() {
               )}
             </div>
             {reply.message && <p className="mt-3 text-sm leading-relaxed text-ink-700 dark:text-paper/80">{reply.message}</p>}
+            {reply.status !== "error" && (
+              <p className="mt-2 text-xs text-ink-500 dark:text-paper/50">
+                {reply.subscribed ? "You are on the HackrLife newsletter list. " : ""}
+                {typeof reply.runs_left_today === "number" ? `${reply.runs_left_today} live run${reply.runs_left_today === 1 ? "" : "s"} left for you today.` : ""}
+              </p>
+            )}
 
             {reply.status === "drafted" && reply.body && (
               <div className="mt-5 rounded-xl border border-ink-600/15 bg-paper/60 dark:border-paper/15 dark:bg-ink-800/60">
