@@ -7,6 +7,7 @@ import { FeatureList } from "@/components/FeatureList";
 import { Eyebrow } from "@/components/Section";
 import { ProductExperience } from "@/components/product/ProductExperience";
 import { LiveInvoiceChaser } from "@/components/live/LiveInvoiceChaser";
+import { AgentArchitecture } from "@/components/live/AgentArchitecture";
 
 /** Pre-render every product page at build time. */
 export function generateStaticParams() {
@@ -54,7 +55,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
           <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink-600 dark:text-paper/70">{p.definition}</p>
           <div className="mt-7 flex flex-wrap gap-3">
             {p.liveDemo ? (
-              <a href="#live" className="btn-primary">Try the real agent</a>
+              <a href="#live" className="btn-primary">Try the live demo</a>
             ) : (
               <a href="#demo" className="btn-primary">Try demo</a>
             )}
@@ -64,6 +65,71 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
       </section>
 
       <div className="container-lab space-y-16 py-16">
+        {p.liveDemo === "invoice-chaser" ? (
+          <>
+            {/* 2. What it is, what it does and why it matters */}
+            <section className="grid gap-6 md:grid-cols-2">
+              <div className="card p-6">
+                <Eyebrow>Why it matters</Eyebrow>
+                <p className="text-base leading-relaxed text-ink-800 dark:text-paper/85">{p.situation}</p>
+                <div className="mt-5 border-t border-ink-600/10 pt-4 dark:border-paper/10">
+                  <p className="font-mono text-[11px] uppercase tracking-wide text-ink-500 dark:text-paper/50">With the agent</p>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-700 dark:text-paper/75">{p.endState}</p>
+                </div>
+              </div>
+              <FeatureList title="What it does" items={p.handles} tone="signal" />
+            </section>
+
+            {/* 3. Live demo */}
+            <section id="live" className="scroll-mt-24">
+              <Eyebrow>Live demo</Eyebrow>
+              <h2 className="font-display text-3xl font-semibold text-ink-900 dark:text-paper">Run the real agent</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-600 dark:text-paper/70">
+                This is the actual n8n workflow and Claude, not a simulation. Pick an invoice on the left and run it. On the right you can watch each step as the agent decides what to do, and when a reminder is due it arrives in your inbox. Nothing is ever sent to the client on the invoice.
+              </p>
+              <div className="mt-6">
+                <LiveInvoiceChaser />
+              </div>
+            </section>
+
+            {/* 4. Agent architecture */}
+            <section id="architecture" className="scroll-mt-24">
+              <Eyebrow>Agent architecture</Eyebrow>
+              <h2 className="font-display text-3xl font-semibold text-ink-900 dark:text-paper">How {p.name} is built</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-600 dark:text-paper/70">
+                The production agent runs every weekday at 08:00. Blue steps do the work, purple paths handle exceptions and amber checks are the controls a step cannot pass without. Click any step to see what goes in, the rule it applies and what comes out.
+              </p>
+              <div className="mt-6">
+                <AgentArchitecture graph={p.graph} />
+              </div>
+              <div className="mt-6 grid gap-5 md:grid-cols-3">
+                <div className="card p-6">
+                  <h3 className="font-display text-lg font-semibold text-ink-900 dark:text-paper">Harness controls</h3>
+                  <ul className="mt-4 space-y-2.5">
+                    {p.harness.controls.map((c) => (
+                      <li key={c} className="flex gap-3 text-sm leading-relaxed text-ink-700 dark:text-paper/75">
+                        <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-500" />
+                        {c}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <FeatureList title="What it never does" items={p.boundaries} tone="muted" />
+                <div className="card p-6 text-sm leading-relaxed text-ink-700 dark:text-paper/75">
+                  <h3 className="font-display text-lg font-semibold text-ink-900 dark:text-paper">The stack</h3>
+                  <p className="mt-3">
+                    <span className="font-semibold text-ink-900 dark:text-paper">In production:</span> a schedule in n8n reads the invoice sheet in Google Sheets, Claude writes each reminder, a code check compares the amount and invoice number with the sheet, and the reminder is saved as a Gmail draft for the owner to send.
+                  </p>
+                  <p className="mt-3">
+                    <span className="font-semibold text-ink-900 dark:text-paper">In this demo:</span> the page calls a separate public n8n workflow with the same rules. It only knows six fictional invoices, emails nobody but the visitor, and is limited to 25 runs a day.
+                  </p>
+                </div>
+              </div>
+            </section>
+          </>
+        ) : (
+          <>
+
         {/* 2 + 3. Situation / What it handles */}
         <section className="grid gap-6 md:grid-cols-2">
           <div className="card p-6">
@@ -79,19 +145,6 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
             <FeatureList title="What it deliberately does not do" items={p.boundaries} tone="muted" />
           </div>
         </section>
-
-        {p.liveDemo === "invoice-chaser" && (
-          <section id="live" className="scroll-mt-24">
-            <Eyebrow>Live agent</Eyebrow>
-            <h2 className="font-display text-3xl font-semibold text-ink-900 dark:text-paper">Try the real agent</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-600 dark:text-paper/70">
-              This runs the actual n8n workflow and Claude, not a simulation. Pick a sample invoice and have the reminder emailed to you, or type your own invoice and see the draft here. Either way the agent decides whether to chase, picks the tone and writes the reminder. Nothing is ever sent to the client on the invoice.
-            </p>
-            <div className="mt-6">
-              <LiveInvoiceChaser />
-            </div>
-          </section>
-        )}
 
         {/* 4 + 5. Interactive demo, workflow and harness */}
         <ProductExperience slug={p.slug} />
@@ -154,6 +207,9 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
             </ul>
           </div>
         </section>
+
+          </>
+        )}
 
         {/* 9. Book a conversation */}
         <section className="relative overflow-hidden rounded-2xl border border-ink-600/15 bg-ink-900 px-7 py-12 text-paper dark:border-paper/15 sm:px-12">

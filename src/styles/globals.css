@@ -119,3 +119,18 @@
 .dark .scroll-thin::-webkit-scrollbar-thumb {
   background: rgba(247, 245, 240, 0.2);
 }
+
+/* Live demo: n8n-style canvas and the line that carries the run to the next step. */
+.canvas-dots {
+  background-image: radial-gradient(circle, rgba(120, 120, 140, 0.18) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+@keyframes flow-down {
+  from { background-position: 0 0; }
+  to { background-position: 0 12px; }
+}
+.flow-line {
+  background-image: repeating-linear-gradient(to bottom, currentColor 0 6px, transparent 6px 12px);
+  background-size: 2px 12px;
+  animation: flow-down 0.5s linear infinite;
+}
