@@ -532,7 +532,7 @@ export const appointmentAssistant: Product = {
   outcome: "Confirm visits and handle changes automatically.",
   sectorLabel: "Appointment businesses",
   sectors: ["Appointments"],
-  outcomes: ["Fill capacity"],
+  outcomes: ["Fill capacity", "Reminders and follow-ups"],
   definition:
     "It sends appointment reminders, collects confirmations and handles rescheduling or cancellation within the business’s stated policy, keeping the calendar current. A move secures the replacement before the original slot is released, and freed slots are passed on to the waitlist.",
   situation:

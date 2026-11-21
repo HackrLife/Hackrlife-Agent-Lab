@@ -500,7 +500,7 @@ export const bookingFollowUp: Product = {
   outcome: "Recover unfinished booking enquiries.",
   sectorLabel: "Small accommodation",
   sectors: ["Accommodation"],
-  outcomes: ["Convert sales"],
+  outcomes: ["Convert sales", "Reminders and follow-ups"],
   definition:
     "Follows up eligible accommodation enquiries that stopped short of booking, using current availability and an answer to the question the guest left unresolved. It returns the guest to checkout at a freshly checked rate and stops as soon as they book, decline, opt out or reach the contact limit.",
   situation:

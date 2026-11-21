@@ -490,7 +490,7 @@ export const serviceReminders: Product = {
   outcome: "Bring customers back when service is due.",
   sectorLabel: "Independent automotive",
   sectors: ["Automotive"],
-  outcomes: ["Grow repeat business"],
+  outcomes: ["Grow repeat business", "Reminders and follow-ups"],
   definition:
     "Uses recorded service dates, approved maintenance intervals and reliable mileage to work out when each vehicle is due, and invites the customer to book at that point. Unknown mileage stays unknown: it is asked for, never estimated, and date-based reminders go out only where the approved rule allows.",
   situation:

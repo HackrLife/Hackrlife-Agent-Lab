@@ -6,7 +6,7 @@ import { Eyebrow } from "@/components/Section";
 export const metadata: Metadata = {
   title: "Solutions",
   description:
-    "Twenty practical automations for small businesses: answer enquiries, book customers, follow up quotes, fill cancelled slots and grow repeat business. Try each one with sample data.",
+    "Practical automations for small businesses: answer enquiries, book customers, follow up quotes, chase invoices, fill cancelled slots and grow repeat business. Try each one with sample data.",
 };
 
 function pick<T extends string>(list: readonly T[], value?: string | string[]): T | "All" {

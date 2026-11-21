@@ -562,7 +562,7 @@ export const quoteFollowUp: Product = {
   outcome: "Keep every outstanding quote moving.",
   sectorLabel: "Home services and custom orders",
   sectors: ["Home services", "Local orders"],
-  outcomes: ["Convert sales"],
+  outcomes: ["Convert sales", "Reminders and follow-ups"],
   definition:
     "Follows up quotes you have already issued on a limited schedule, answers questions from the quote itself and helps the customer accept or ask for a change. You keep control of price and scope: any change becomes a new quote version only after you approve it.",
   situation:

@@ -6,6 +6,7 @@ const outcomeColor: Record<Outcome, string> = {
   "Fill capacity": "bg-ember/15 text-ember dark:bg-ember/20 dark:text-ember",
   "Grow repeat business": "bg-ink-900/8 text-ink-700 dark:bg-paper/10 dark:text-paper/80",
   "Manage orders": "bg-data/15 text-data-600 dark:bg-data/20 dark:text-data",
+  "Reminders and follow-ups": "bg-ember/15 text-ember dark:bg-ember/20 dark:text-ember",
 };
 
 export function OutcomeBadge({ outcome }: { outcome: Outcome }) {

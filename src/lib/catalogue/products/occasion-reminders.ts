@@ -509,7 +509,7 @@ export const occasionReminders: Product = {
   outcome: "Help customers remember the next occasion.",
   sectorLabel: "Florists bakeries and gift businesses",
   sectors: ["Local orders"],
-  outcomes: ["Grow repeat business"],
+  outcomes: ["Grow repeat business", "Reminders and follow-ups"],
   definition:
     "Uses dates and preferences customers have given you to invite a repeat order a set time before each occasion. Every invitation is built from current products and delivery cutoffs, and only customers who opted in receive one.",
   situation:

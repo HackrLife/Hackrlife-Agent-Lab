@@ -7,6 +7,7 @@ import { demandManager } from "./products/demand-manager";
 import { eventSalesAssistant } from "./products/event-sales-assistant";
 import { garageReceptionist } from "./products/garage-receptionist";
 import { guestExtras } from "./products/guest-extras";
+import { invoiceChaser } from "./products/invoice-chaser";
 import { hotelConcierge } from "./products/hotel-concierge";
 import { leadToSale } from "./products/lead-to-sale";
 import { occasionReminders } from "./products/occasion-reminders";
@@ -31,6 +32,7 @@ export const products: Product[] = [
   garageReceptionist,
   guestExtras,
   hotelConcierge,
+  invoiceChaser,
   leadToSale,
   occasionReminders,
   orderAssistant,

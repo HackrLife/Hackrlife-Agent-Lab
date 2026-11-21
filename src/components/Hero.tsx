@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { products } from "@/lib/catalogue";
 
 /**
  * Hero — homepage hero.
@@ -50,7 +51,7 @@ export function Hero() {
           className="animate-fade-up mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 font-mono text-xs uppercase tracking-wide text-ink-500 dark:text-paper/50"
           style={{ animationDelay: "240ms" }}
         >
-          <span>20 solutions</span>
+          <span>{products.length} solutions</span>
           <span className="hidden h-3 w-px bg-ink-600/20 dark:bg-paper/20 sm:block" />
           <span>Try every demo without signing up</span>
           <span className="hidden h-3 w-px bg-ink-600/20 dark:bg-paper/20 sm:block" />

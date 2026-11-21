@@ -23,7 +23,8 @@ export type Outcome =
   | "Convert sales"
   | "Fill capacity"
   | "Grow repeat business"
-  | "Manage orders";
+  | "Manage orders"
+  | "Reminders and follow-ups";
 
 export const SECTORS: Sector[] = [
   "Home services",
@@ -39,6 +40,7 @@ export const OUTCOMES: Outcome[] = [
   "Fill capacity",
   "Grow repeat business",
   "Manage orders",
+  "Reminders and follow-ups",
 ];
 
 /* ------------------------------ Schematic ------------------------------ */

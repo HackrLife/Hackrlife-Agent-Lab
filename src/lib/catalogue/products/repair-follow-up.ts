@@ -553,7 +553,7 @@ export const repairFollowUp: Product = {
   outcome: "Recover work customers postponed.",
   sectorLabel: "Independent automotive",
   sectors: ["Automotive"],
-  outcomes: ["Convert sales", "Grow repeat business"],
+  outcomes: ["Convert sales", "Grow repeat business", "Reminders and follow-ups"],
   definition:
     "Identifies repairs a technician marked as deferred, checks the repair history to confirm the work is still outstanding and invites the customer back when the agreed review date arrives. It refreshes the estimate when the price has changed and records the customer’s decision to book, postpone or decline.",
   situation:
