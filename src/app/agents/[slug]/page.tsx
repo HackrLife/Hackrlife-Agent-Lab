@@ -85,7 +85,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
             <Eyebrow>Live agent</Eyebrow>
             <h2 className="font-display text-3xl font-semibold text-ink-900 dark:text-paper">Try the real agent</h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-600 dark:text-paper/70">
-              This runs the actual n8n workflow and Claude, not a simulation. Give it one invoice and it decides whether to chase, picks the tone and writes the reminder. The draft comes back to this page; nothing is sent.
+              This runs the actual n8n workflow and Claude, not a simulation. Pick a sample invoice and have the reminder emailed to you, or type your own invoice and see the draft here. Either way the agent decides whether to chase, picks the tone and writes the reminder. Nothing is ever sent to the client on the invoice.
             </p>
             <div className="mt-6">
               <LiveInvoiceChaser />
