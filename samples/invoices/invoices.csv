@@ -1,0 +1,9 @@
+invoice_no,client,business,email,amount,due_date,status,last_chased,last_tone,agent_note
+INV-1042,Alex Taylor,Corner Café,alex@example.com,1240,2026-11-16,Unpaid,,,
+INV-1038,Sam Rivera,Harbour Deli,sam@example.com,860,2026-11-05,Unpaid,,,
+INV-1035,Jordan Lee,Northside Grocer,jordan@example.com,2150,2026-11-09,Paid,,,
+INV-1045,Casey Morgan,Park Kiosk,casey@example.com,420,2026-11-26,Unpaid,,,
+INV-1031,Riley Chen,Bay Bistro,riley@example.com,1580,2026-10-15,Unpaid,2026-11-17,Firm,
+INV-1029,Morgan Blake,Hilltop Bakehouse,morgan@example.com,975,2026-10-12,Unpaid,2026-11-02,Firm,
+INV-1027,Jamie Fox,Station Coffee,,640,2026-11-10,Unpaid,,,
+INV-1022,Taylor Quinn,Seaside Diner,taylor@example.com,1100,2026-10-01,Unpaid,2026-11-10,Final notice,
