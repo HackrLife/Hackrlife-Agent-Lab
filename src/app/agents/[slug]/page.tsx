@@ -118,7 +118,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                 <div className="card p-6 text-sm leading-relaxed text-ink-700 dark:text-paper/75">
                   <h3 className="font-display text-lg font-semibold text-ink-900 dark:text-paper">The stack</h3>
                   <p className="mt-3">
-                    <span className="font-semibold text-ink-900 dark:text-paper">In production:</span> a schedule in n8n reads the invoice sheet in Google Sheets, Claude writes each reminder, a code check compares the amount and invoice number with the sheet, and the reminder is saved as a Gmail draft for the owner to send.
+                    <span className="font-semibold text-ink-900 dark:text-paper">In production:</span> a schedule in n8n reads the invoice sheet in Google Sheets, Claude writes each reminder, a second check compares the invoice number, amount and due date in the reminder with the sheet, and the reminder is saved as a Gmail draft for the owner to send.
                   </p>
                   <p className="mt-3">
                     <span className="font-semibold text-ink-900 dark:text-paper">In this demo:</span> the page calls a separate public n8n workflow with the same rules. It only knows six fictional invoices, emails nobody but the visitor, and is limited to 25 runs a day.

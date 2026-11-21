@@ -59,11 +59,11 @@ type StepId = "in" | "check" | "write" | "verify" | "send";
 type StepState = "idle" | "active" | "done" | "skipped" | "halt";
 
 const STEPS: { id: StepId; code: string; title: string; sub: string }[] = [
-  { id: "in", code: "IN", title: "Invoice received", sub: "Sent from this page to the n8n workflow" },
-  { id: "check", code: "IF", title: "Check status and dates", sub: "Paid? How late? Chased in the last 7 days?" },
-  { id: "write", code: "AI", title: "Claude writes the reminder", sub: "Friendly from 3 days, firm from 14, final notice from 30" },
-  { id: "verify", code: "=", title: "Check amount and invoice number", sub: "Must match the invoice exactly" },
-  { id: "send", code: "@", title: "Email it to you", sub: "Never to the client on the invoice" },
+  { id: "in", code: "1", title: "Agent scans and selects the invoice", sub: "Reads the invoice you picked on this page" },
+  { id: "check", code: "2", title: "Agent checks status and dates", sub: "Paid? How many days overdue? Chased in the last 7 days?" },
+  { id: "write", code: "3", title: "Agent crafts the reminder email", sub: "Friendly from 3 days late, firm from 14, final notice from 30" },
+  { id: "verify", code: "4", title: "Second agent checks for errors in dates and amounts", sub: "Invoice number, amount and due date must match the invoice exactly" },
+  { id: "send", code: "5", title: "Agent emails it to the requested address", sub: "Only to the email you gave, never to the client on the invoice" },
 ];
 
 const IDLE: Record<StepId, StepState> = { in: "idle", check: "idle", write: "idle", verify: "idle", send: "idle" };
