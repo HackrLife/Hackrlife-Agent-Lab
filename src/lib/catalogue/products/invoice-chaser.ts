@@ -367,7 +367,7 @@ export const invoiceChaser: Product = {
   sectors: ["Home services", "Automotive", "Appointments", "Accommodation", "Local orders"],
   outcomes: ["Reminders and follow-ups"],
   definition:
-    "Every weekday morning it reads your invoice sheet, finds the unpaid invoices that are overdue and drafts a reminder for each one in a tone that suits the delay. Every reminder waits in your Gmail drafts, so you read it and press send yourself.",
+    "An agent that scans your receivables every weekday morning. It reads your invoice sheet, finds the unpaid invoices that are overdue and drafts a reminder for each one, in a tone that suits the delay. A second agent then checks every amount and date against the invoice and holds back any invoice in dispute. The reminders wait in your Gmail drafts, so you check them once and press send.",
   situation:
     "A bakery supplies a dozen cafés on 14-day terms. Three invoices are late, one by more than a month, and the owner only finds out when she sits down with the books on a Sunday night and has to write each reminder from scratch.",
   endState:
@@ -375,7 +375,9 @@ export const invoiceChaser: Product = {
   handles: [
     "Reads the invoice sheet every weekday at 08:00 and finds overdue, unpaid invoices",
     `Matches the tone to the delay: friendly from ${GRACE_DAYS} days, firm from ${FIRM_DAYS}, final notice from ${FINAL_DAYS}`,
-    "Saves each reminder as a Gmail draft with the invoice number and amount copied from the sheet",
+    "Has a second agent check the invoice number, amount and due date in every reminder against the sheet",
+    "Holds back any invoice marked as disputed and leaves a note for the owner",
+    "Saves each reminder as a Gmail draft for the owner to check and send",
     `Writes the draft date back to the sheet so no invoice is chased twice within ${REPEAT_DAYS} days`,
     "Flags invoices with no email, and any still unpaid after a final notice, to the owner",
   ],
@@ -410,7 +412,8 @@ export const invoiceChaser: Product = {
       "Production reads a Google Sheet, writes reminders with a model and saves them as Gmail drafts. The demo uses a fictional bakery's five-row invoice sheet, a simulation clock and an outbox that holds every draft.",
     controls: [
       "Draft only: the workflow has no step that can send an email",
-      "Copy the amount and invoice number from the sheet and check them before saving",
+      "A second check compares the invoice number, amount and due date in each reminder with the sheet; any mismatch replaces the draft with a plain template",
+      "Skip any invoice marked Disputed and flag it to the owner",
       `Skip any invoice chased in the last ${REPEAT_DAYS} days`,
       "Use a draft key per invoice and day so a retried run never creates a second draft",
       "Stop after one final notice and hand the invoice to the owner",
@@ -426,10 +429,10 @@ export const invoiceChaser: Product = {
       { id: "draft", kind: "action", row: 4, title: "Save reminder as Gmail draft", input: "Invoice and tone", rule: "One draft per invoice per day", output: "Gmail draft", failure: "Retry → duplicate ignored", system: "Model + Gmail drafts (demo: held outbox)" },
       { id: "write", kind: "action", row: 5, title: "Write draft date to sheet", input: "Saved draft", rule: "Set last chased to today", output: "Updated row", failure: "—", system: "Google Sheets (demo: sample sheet)" },
       { id: "b_missing", kind: "branch", row: 1.2, title: "Missing email", input: "Row without a client email", rule: "No draft; ask the owner to add one", output: "Owner flag", failure: "—" },
-      { id: "b_skip", kind: "branch", row: 2.1, title: "Paid or not yet due", input: "Paid, not due or in grace period", rule: "Skip this run", output: "No action", failure: "—" },
+      { id: "b_skip", kind: "branch", row: 2.1, title: "Paid, disputed or not yet due", input: "Paid, disputed, not due or in grace period", rule: "Skip this run; flag disputes to the owner", output: "No action or owner note", failure: "—" },
       { id: "b_recent", kind: "branch", row: 3, title: "Chased in the last 7 days", input: "Last chased date", rule: `Hold until ${REPEAT_DAYS} days have passed`, output: "Held invoice", failure: "—" },
       { id: "c_repeat", kind: "check", row: 2, title: "No repeat within 7 days", input: "Last chased date", rule: `Block if chased less than ${REPEAT_DAYS} days ago`, output: "Allow / hold", failure: "Too soon → held" },
-      { id: "c_amount", kind: "check", row: 3.2, title: "Amount unchanged", input: "Sheet amount and draft", rule: "Amount and invoice number copied, never edited", output: "Pass / block", failure: "Mismatch → no draft" },
+      { id: "c_amount", kind: "check", row: 3.2, title: "Dates and amounts checked", input: "Sheet row and draft", rule: "Invoice number, amount and due date must match the sheet exactly", output: "Pass / replace", failure: "Mismatch → plain template" },
       { id: "c_draftonly", kind: "check", row: 4.4, title: "Draft only, never send", input: "Reminder", rule: "Saved to Gmail drafts; the owner sends", output: "Draft", failure: "No send step exists" },
     ],
     edges: [
